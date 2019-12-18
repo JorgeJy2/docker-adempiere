@@ -1,0 +1,32 @@
+version: '3'
+services:
+  adempiere-tenant:
+    networks:
+      - adempiere_network
+    external_links:
+      - database:database
+    image: "adempiere_${ADEMPIERE_VERSION}:${COMPOSE_PROJECT_NAME}" # Nombre de la imagen basada en el nombre de la carpeta
+    container_name: "${COMPOSE_PROJECT_NAME}" # Nombre del contenedor
+    restart: on-failure:5 # Persitencia del contenedor.
+    ports:
+      - ${ADEMPIERE_WEB_PORT}:8888 # Puerto http del host al que es mapeado
+      - ${ADEMPIERE_SSL_PORT}:4444 # Puerto https del host al que es mapeado
+    environment:
+      ADEMPIERE_DB_INIT: ${ADEMPIERE_DB_INIT} #Variable de entorno del contenedor para determinar si la BD es restaurada
+    build:
+      context: .
+      dockerfile: ./adempiere-last/Dockerfile
+      args:
+        ADEMPIERE_BINARY : ${ADEMPIERE_BINARY} # Dirección del archivo tar.gz de adempiere
+        ADEMPIERE_DB_HOST: ${DB_HOST} #Variable creada por el archivo application.sh 
+        ADEMPIERE_DB_PORT: ${DB_PORT} #Variable creada por el archivo application.sh 
+        ADEMPIERE_DB_NAME: ${ADEMPIERE_DB_NAME}
+        ADEMPIERE_DB_USER: ${ADEMPIERE_DB_USER}
+        ADEMPIERE_DB_PASSWORD: ${ADEMPIERE_DB_PASSWORD}
+        ADEMPIERE_DB_ADMIN_PASSWORD: ${ADEMPIERE_DB_ADMIN_PASSWORD}
+    volumes:
+      -  "./${COMPOSE_PROJECT_NAME}/lib:/opt/Adempiere/lib_volumen"
+      -  "./${COMPOSE_PROJECT_NAME}/packages:/opt/Adempiere/packages_volumen"
+networks:
+  adempiere_network:
+    external: true

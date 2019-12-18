@@ -1,0 +1,21 @@
+version: '3'
+services:
+  database:
+    image: postgres:${PG_VERSION}
+    container_name: $NAME_CONTAINER_POSTGRES
+    ports:
+      - "$ADEMPIERE_DB_PORT:5432"
+    volumes:
+      -  ${POSTGRES_VOLUMEN_BACKUP}:/var/lib/postgresql/data
+    restart: on-failure:5
+    networks:
+      - adempiere_network
+    environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: $ADEMPIERE_DB_ADMIN_PASSWORD
+        PGDATA: /var/lib/postgresql/data/pgdata
+        POSTGRES_INITDB_ARGS: ''
+        POSTGRES_INITDB_XLOGDIR: ''
+networks:
+  adempiere_network:
+    external : true

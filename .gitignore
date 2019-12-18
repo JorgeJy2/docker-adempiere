@@ -1,0 +1,6 @@
+postgresql/dist/Adempiere*
+
+adempiere/*.tar.gz
+binary_*/*
+instance_*/lib/*
+instance_*/packages/*
